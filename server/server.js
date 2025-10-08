@@ -1,7 +1,9 @@
 const express = require('express');
 const dotenv = require('dotenv')
+const cookieParser = require('cookie-parser')
 
-const connectDataBase = require('./config/db.js')
+const connectDataBase = require('./config/db')
+const authRouter = require('./routes/auth.routes')
 
 dotenv.config()
 
@@ -10,10 +12,14 @@ const PORT = 8000
 
 connectDataBase()
 
-app.use(express.json())
+app.use(express.json());
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
-    res.json({'message': "Server is running"})
+    res.json({ message: "Server is running" })
+    
 })
 
-app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`));
+app.use('/user', authRouter)
+
+app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
