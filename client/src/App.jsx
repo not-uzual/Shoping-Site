@@ -7,6 +7,7 @@ import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import useCurrentUser from "./hooks/useCurrentUser.jsx";
 import Profile from "./pages/Profile.jsx";
+import Product from "./pages/Product.jsx";
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/orders" element={<div className="p-6">Orders page (coming soon)</div>} />
           <Route path="/cart" element={<div className="p-6">Cart page (coming soon)</div>} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/product/:id" element={<Product />} />
           <Route path="/search" element={<div className="p-6">Search results (coming soon)</div>} />
         </Routes>
       </main>

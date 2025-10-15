@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ProductCard from '../components/ProductCard';
+import { getAllProducts } from '../APICalls/productCalls';
 
 const bannerImages = [
   {
@@ -17,68 +18,34 @@ const bannerImages = [
     imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80',
     alt: 'Home Decor Banner',
   },
+  {
+  id: 4,
+  imageUrl: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80',
+  alt: 'Summer Collection Banner'
+  },
+  {
+    id: 5,
+    imageUrl: 'https://images.unsplash.com/photo-1591085686350-798c0f9faa7f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80',
+    alt: 'Tech Gadgets Sale Banner'
+  },
+  {
+    id: 6,
+    imageUrl: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80',
+    alt: 'Fashion Week Special'
+  },
+  {
+    id: 7,
+    imageUrl: 'https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80',
+    alt: 'Holiday Season Sale'
+  },
+  {
+    id: 8,
+    imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80',
+    alt: 'Home Office Essentials'
+  }
 ];
 
-const sampleProducts = [
-  {
-    id: '1',
-    name: 'Wireless Headphones',
-    price: 2999,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    discountPercentage: 10,
-  },
-  {
-    id: '2',
-    name: 'Smart Watch',
-    price: 4999,
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    discountPercentage: 15,
-  },
-  {
-    id: '3',
-    name: 'Premium Sneakers',
-    price: 3499,
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    discountPercentage: 0,
-  },
-  {
-    id: '4',
-    name: 'Smartphone Case',
-    price: 999,
-    image: 'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    discountPercentage: 5,
-  },
-  {
-    id: '5',
-    name: 'Bluetooth Speaker',
-    price: 1999,
-    image: 'https://images.unsplash.com/photo-1589003077984-894e133dabab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    discountPercentage: 20,
-  },
-  {
-    id: '6',
-    name: 'Coffee Mug',
-    price: 499,
-    image: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    discountPercentage: 0,
-  },
-  {
-    id: '7',
-    name: 'Laptop Sleeve',
-    price: 1499,
-    image: 'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    discountPercentage: 10,
-  },
-  {
-    id: '8',
-    name: 'Sunglasses',
-    price: 1299,
-    image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    discountPercentage: 0,
-  },
-];
-
-// Using image URLs for arrow icons instead of SVG components
+const sampleProducts = await getAllProducts()
 
 function Home() {
   const [currentBanner, setCurrentBanner] = useState(0);
@@ -166,8 +133,8 @@ function Home() {
       <section className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-bold text-amber-500 mb-6">Featured Products</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {sampleProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
+          {sampleProducts.map((product, index) => (
+            <ProductCard key={index} product={product} />
           ))}
         </div>
       </section>

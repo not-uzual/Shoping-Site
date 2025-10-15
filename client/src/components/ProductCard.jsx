@@ -2,22 +2,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function ProductCard({ product }) {
-  // Default values if product props are missing
+
   const {
-    id = '',
+    _id = '',
     name = 'Product Name',
     price = 0,
     image = 'https://via.placeholder.com/300',
-    discountPercentage = 0
+    discount = 0
   } = product || {};
 
-  // Calculate discounted price if there's a discount
-  const discountedPrice = price - (price * (discountPercentage / 100));
+  const discountedPrice = price - (price * (discount / 100));
   
   return (
     <div className="group relative">
       <div className="overflow-hidden rounded-md bg-neutral-100">
-        <Link to={`/product/${id}`}>
+        <Link to={`/product/${_id}`}>
           <img 
             src={image} 
             alt={name}
@@ -25,9 +24,9 @@ function ProductCard({ product }) {
           />
         </Link>
         
-        {discountPercentage > 0 && (
+        {discount > 0 && (
           <div className="absolute top-2 left-2 rounded-full bg-black px-2 py-1 text-xs font-semibold text-white">
-            {discountPercentage}% OFF
+            {discount}% OFF
           </div>
         )}
         
@@ -45,11 +44,11 @@ function ProductCard({ product }) {
       
       <div className="mt-3 flex flex-col">
         <h3 className="text-sm font-medium text-amber-500 line-clamp-1">
-          <Link to={`/product/${id}`}>{name}</Link>
+          <Link to={`/product/${_id}`}>{name}</Link>
         </h3>
         
         <div className="mt-1 flex items-center">
-          {discountPercentage > 0 ? (
+          {discount > 0 ? (
             <>
               <span className="text-sm font-semibold text-neutral-900">₹{discountedPrice.toFixed(2)}</span>
               <span className="ml-2 text-xs text-neutral-500 line-through">₹{price.toFixed(2)}</span>
