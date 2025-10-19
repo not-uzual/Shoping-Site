@@ -66,33 +66,3 @@ export async function removeFromCart(productId) {
         }
     }
 }
-
-
-export async function applyCoupon(couponCode) {
-    try {
-        const response = await api.post('/cart/coupon', { couponCode });
-        return response.data;
-    } catch (error) {
-        console.error("Apply coupon error:", error);
-        if (error.response && error.response.data) {
-            throw error.response.data;
-        } else {
-            throw new Error("Failed to apply coupon. Please try again.");
-        }
-    }
-}
-
-
-export async function removeCoupon() {
-    try {
-        const response = await api.delete('/cart/coupon');
-        return response.data;
-    } catch (error) {
-        console.error("Remove coupon error:", error);
-        if (error.response && error.response.data) {
-            throw error.response.data;
-        } else {
-            throw new Error("Failed to remove coupon. Please try again.");
-        }
-    }
-}

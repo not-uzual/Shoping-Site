@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getCart, updateCartItemQuantity, removeFromCart, applyCoupon, removeCoupon } from '../APICalls/cartCalls';
+import { getCart, updateCartItemQuantity, removeFromCart } from '../APICalls/cartCalls';
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [couponCode, setCouponCode] = useState('');
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
   
   useEffect(() => {
     const fetchCart = async () => {
@@ -30,7 +27,6 @@ function Cart() {
           setCartItems([]);
         }
       } catch (err) {
-        setError(err.message || 'Failed to load cart');
         console.error('Error fetching cart:', err);
       } finally {
         setLoading(false);
@@ -44,23 +40,12 @@ function Cart() {
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const shipping = subtotal > 100 ? 0 : 10;
     const tax = subtotal * 0.08;
-    let discount = 0;
-    
-    if (appliedCoupon) {
-      if (appliedCoupon.type === 'percentage') {
-        discount = subtotal * (appliedCoupon.value / 100);
-      } else {
-        discount = appliedCoupon.value;
-      }
-    }
-    
-    const total = subtotal + shipping + tax - discount;
+    const total = subtotal + shipping + tax;
     
     return {
       subtotal: subtotal.toFixed(2),
       shipping: shipping.toFixed(2),
       tax: tax.toFixed(2),
-      discount: discount.toFixed(2),
       total: total.toFixed(2)
     };
   };
@@ -78,7 +63,6 @@ function Cart() {
         )
       );
     } catch (err) {
-      setError(err.message || 'Failed to update quantity');
       console.error('Error updating quantity:', err);
     } finally {
       setLoading(false);
@@ -92,45 +76,7 @@ function Cart() {
       
       setCartItems(prevItems => prevItems.filter(item => item.id !== id));
     } catch (err) {
-      setError(err.message || 'Failed to remove item');
       console.error('Error removing item:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleApplyCoupon = async () => {
-    try {
-      setLoading(true);
-      const response = await applyCoupon(couponCode);
-      
-      if (response.cart && response.cart.couponApplied) {
-        setAppliedCoupon({
-          code: response.cart.couponApplied.code,
-          type: response.cart.couponApplied.discountAmount ? 'fixed' : 'percentage',
-          value: response.cart.couponApplied.discountAmount || 0
-        });
-      } else {
-        setError('Invalid coupon code');
-        setTimeout(() => setError(null), 3000);
-      }
-    } catch (err) {
-      setError(err.message || 'Failed to apply coupon');
-      setTimeout(() => setError(null), 3000);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRemoveCoupon = async () => {
-    try {
-      setLoading(true);
-      await removeCoupon();
-      setAppliedCoupon(null);
-      setCouponCode('');
-    } catch (err) {
-      setError(err.message || 'Failed to remove coupon');
-      setTimeout(() => setError(null), 3000);
     } finally {
       setLoading(false);
     }
@@ -263,50 +209,6 @@ function Cart() {
           <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
             <h2 className="text-lg font-bold text-gray-800 mb-4">Order Summary</h2>
             
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="coupon">
-                Apply Coupon Code
-              </label>
-              <div className="flex">
-                <input
-                  type="text"
-                  id="coupon"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                  className="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:ring-amber-500 focus:border-amber-500 text-sm"
-                  placeholder="Enter coupon code"
-                  disabled={appliedCoupon !== null}
-                />
-                {appliedCoupon ? (
-                  <button
-                    onClick={handleRemoveCoupon}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-r-md border border-l-0 border-gray-300 text-sm font-medium transition-colors"
-                  >
-                    Remove
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleApplyCoupon}
-                    className="px-4 py-2 bg-amber-500 text-white hover:bg-amber-600 rounded-r-md text-sm font-medium transition-colors"
-                  >
-                    Apply
-                  </button>
-                )}
-              </div>
-              {error && (
-                <div className="mt-2 text-sm text-red-600">{error}</div>
-              )}
-              {appliedCoupon && (
-                <div className="mt-2 text-sm text-green-600">
-                  Coupon {appliedCoupon.code} applied! 
-                  {appliedCoupon.type === 'percentage' ? 
-                    ` (${appliedCoupon.value}% off)` : 
-                    ` ($${appliedCoupon.value} off)`
-                  }
-                </div>
-              )}
-            </div>
-            
             <div className="border-t pt-4 mb-4">
               <div className="flex justify-between py-2">
                 <span className="text-gray-600">Subtotal</span>
@@ -322,12 +224,6 @@ function Cart() {
                 <span className="text-gray-600">Tax</span>
                 <span className="text-gray-800 font-medium">${summary.tax}</span>
               </div>
-              {appliedCoupon && (
-                <div className="flex justify-between py-2">
-                  <span className="text-amber-600">Discount</span>
-                  <span className="text-amber-600">- ${summary.discount}</span>
-                </div>
-              )}
               <div className="flex justify-between py-3 border-t mt-2 text-lg font-bold">
                 <span className="text-gray-800">Total</span>
                 <span className="text-amber-500">${summary.total}</span>
