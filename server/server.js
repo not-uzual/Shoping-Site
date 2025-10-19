@@ -7,6 +7,7 @@ const connectDataBase = require('./config/db')
 const authRouter = require('./routes/auth.routes')
 const userRouter = require('./routes/user.routes')
 const productRouter = require('./routes/product.routes')
+const cartRouter = require('./routes/cart.routes')
 
 dotenv.config()
 
@@ -31,5 +32,6 @@ app.get('/', (req, res) => {
 app.use('/user', authRouter)
 app.use('/user', userRouter)
 app.use('/product', productRouter)
+app.use('/cart', cartRouter)
 
 app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
