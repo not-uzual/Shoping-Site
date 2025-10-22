@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { useLogoutUser } from '../hooks/useLogoutUser';
 import { addNewAddress } from '../APICalls/userCalls';
+import { getWishlist } from '../APICalls/productCalls';
+import ProductCard from '../components/ProductCard';
 
 function Profile() {
   const { userData } = useSelector(state => state.user);
@@ -11,7 +13,10 @@ function Profile() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
   
-  const [showAddressForm, setShowAddressForm] = useState(false);  
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [wishlistItems, setWishlistItems] = useState([]);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [wishlistError, setWishlistError] = useState(null);
   
   const [newAddress, setNewAddress] = useState({
     type: 'home',
@@ -66,6 +71,41 @@ function Profile() {
       navigate('/login');
     } catch (error) {
       console.error("Error logging out:", error);
+    }
+  };
+  
+  // Fetch wishlist items when the wishlist tab is selected
+  useEffect(() => {
+    if (activeTab === 'wishlist' && userData) {
+      fetchWishlistItems();
+    }
+  }, [activeTab, userData]);
+  
+  const fetchWishlistItems = async () => {
+    if (!userData) return;
+    
+    try {
+      setWishlistLoading(true);
+      setWishlistError(null);
+      const data = await getWishlist();
+      setWishlistItems(data.wishlist || []);
+      console.log(data.wishlist);
+      
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+      setWishlistError(error.message || 'Failed to fetch wishlist items');
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
+  
+  const handleWishlistChange = (productId, isAdded) => {
+    if (!isAdded) {
+      // Remove item from wishlist UI immediately
+      setWishlistItems(prev => prev.filter(item => item._id !== productId));
+    } else {
+      // If somehow an item was added, refresh the list
+      fetchWishlistItems();
     }
   };
 
@@ -145,6 +185,52 @@ function Profile() {
           </div>
 
           <div className="p-6">
+            {activeTab === 'wishlist' && (
+              <div>
+                <h3 className="font-medium text-gray-900 mb-4">My Wishlist</h3>
+                
+                {wishlistLoading ? (
+                  <div className="flex justify-center items-center h-40">
+                    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-amber-500"></div>
+                  </div>
+                ) : wishlistError ? (
+                  <div className="text-center py-8">
+                    <p className="text-red-500">{wishlistError}</p>
+                    <button 
+                      onClick={fetchWishlistItems}
+                      className="mt-4 px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                ) : wishlistItems.length === 0 ? (
+                      <div className="text-center py-12">
+                        <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                          </svg>
+                        </div>
+                        <h3 className="text-lg font-medium text-gray-900 mb-1">Your Wishlist is Empty</h3>
+                        <p className="text-gray-500 mb-4">Save items you love to your wishlist.</p>
+                        <button className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors">
+                          Continue Shopping
+                        </button>
+                      </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {wishlistItems.map(product => (
+                      <ProductCard 
+                        key={product._id} 
+                        product={product} 
+                        inWishlist={true}
+                        onWishlistChange={handleWishlistChange}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            
             {activeTab === 'profile' && (
               <div className="space-y-6">
                 <div>
@@ -371,20 +457,7 @@ function Profile() {
               </div>
             )}
 
-            {activeTab === 'wishlist' && (
-              <div className="text-center py-12">
-                <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-1">Your Wishlist is Empty</h3>
-                <p className="text-gray-500 mb-4">Save items you love to your wishlist.</p>
-                <button className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors">
-                  Continue Shopping
-                </button>
-              </div>
-            )}
+            
 
             {activeTab === 'settings' && (
               <div className="space-y-6">

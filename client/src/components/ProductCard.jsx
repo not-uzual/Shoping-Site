@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { addToCart } from '../APICalls/cartCalls';
+import { addToWishlist, removeFromWishlist } from '../APICalls/productCalls';
 
-function ProductCard({ product }) {
+function ProductCard({ product, inWishlist = false, onWishlistChange = null }) {
   const [addingToCart, setAddingToCart] = useState(false);
   const [cartMessage, setCartMessage] = useState(null);
+  const [isInWishlist, setIsInWishlist] = useState(inWishlist);
+  const [processingWishlist, setProcessingWishlist] = useState(false);
+  
+  const { userData } = useSelector(state => state.user);
 
   const {
     _id = '',
@@ -16,6 +22,10 @@ function ProductCard({ product }) {
 
   const discountedPrice = price - (price * (discount / 100));
   
+  useEffect(() => {
+    setIsInWishlist(inWishlist);
+  }, [inWishlist]);
+
   const handleAddToCart = async () => {
     try {
       setAddingToCart(true);
@@ -27,6 +37,41 @@ function ProductCard({ product }) {
       setTimeout(() => setCartMessage(null), 3000);
     } finally {
       setAddingToCart(false);
+    }
+  };
+  
+  const handleToggleWishlist = async () => {
+    if (!userData) {
+      setCartMessage({ type: 'error', text: 'Please login to add items to wishlist' });
+      setTimeout(() => setCartMessage(null), 3000);
+      return;
+    }
+    
+    try {
+      setProcessingWishlist(true);
+      
+      if (isInWishlist) {
+        await removeFromWishlist(_id);
+        setIsInWishlist(false);
+        setCartMessage({ type: 'success', text: `${name} removed from wishlist!` });
+      } else {
+        await addToWishlist(_id);
+        setIsInWishlist(true);
+        setCartMessage({ type: 'success', text: `${name} added to wishlist!` });
+      }
+      
+      // Call parent's callback if provided
+      if (onWishlistChange) {
+        onWishlistChange(_id, !isInWishlist);
+      }
+      
+      setTimeout(() => setCartMessage(null), 3000);
+    } catch (error) {
+      const action = isInWishlist ? 'remove from' : 'add to';
+      setCartMessage({ type: 'error', text: `Failed to ${action} wishlist: ${error.message}` });
+      setTimeout(() => setCartMessage(null), 3000);
+    } finally {
+      setProcessingWishlist(false);
     }
   };
   
@@ -48,14 +93,25 @@ function ProductCard({ product }) {
         )}
         
         <button 
-          className="absolute right-2 top-2 rounded-full bg-white p-1.5 shadow-sm transition-all hover:bg-amber-500 flex items-center justify-center w-8 h-8"
-          aria-label="Add to wishlist"
+          className={`absolute right-2 top-2 rounded-full p-1.5 shadow-sm transition-all flex items-center justify-center w-8 h-8 ${
+            isInWishlist ? 'bg-white' : 'bg-white'
+          }`}
+          aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+          onClick={handleToggleWishlist}
+          disabled={processingWishlist}
         >
-          <img 
-            src="https://cdn-icons-png.flaticon.com/128/1077/1077035.png"
-            alt="Heart"
-            className="w-4 h-4"
-          />
+          {processingWishlist ? (
+            <div className="w-4 h-4 border-2 border-gray-400 border-t-amber-500 rounded-full animate-spin" />
+          ) : (
+            <img 
+              src={isInWishlist 
+                ? "https://cdn-icons-png.flaticon.com/128/2107/2107845.png" // Filled heart
+                : "https://cdn-icons-png.flaticon.com/128/1077/1077035.png" // Outline heart
+              }
+              alt={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+              className="w-4 h-4"
+            />
+          )}
         </button>
       </div>
       
