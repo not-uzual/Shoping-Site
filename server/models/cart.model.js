@@ -6,7 +6,6 @@ const cartSchema = new mongoose.Schema({
       ref: "User",
       required: true,
     },
-
     items: [{
         product: {
           type: mongoose.Schema.Types.ObjectId,
@@ -23,12 +22,10 @@ const cartSchema = new mongoose.Schema({
           required: true,
         },
       }],
-
     totalAmount: {
       type: Number,
       default: 0,
     },
-
     couponApplied: {
       code: String,
       discountAmount: Number,
@@ -41,7 +38,6 @@ cartSchema.methods.calculateTotal = function(){
   
   if (this.couponApplied && this.couponApplied.discountAmount) {
     this.totalAmount -= this.couponApplied.discountAmount;
-
     if (this.totalAmount < 0) this.totalAmount = 0;
   }
   

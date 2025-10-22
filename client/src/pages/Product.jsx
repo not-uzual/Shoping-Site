@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getSingleProduct } from '../APICalls/productCalls';
 import { addToCart } from '../APICalls/cartCalls';
@@ -54,7 +54,6 @@ function Product() {
       setAddingToCart(true);
       await addToCart(product._id, quantity);
       
-      // Show success message
       setCartMessage({ type: 'success', text: `${product.name} added to cart!` });
       setTimeout(() => setCartMessage(null), 3000);
     } catch (error) {
@@ -107,7 +106,6 @@ function Product() {
 
   return (
     <main className="flex flex-col min-h-screen bg-gray-50">
-      {/* Breadcrumb */}
       <div className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center text-sm">
@@ -118,7 +116,6 @@ function Product() {
         </div>
       </div>
 
-      {/* Product Content */}
       <section className="container mx-auto px-4 py-8 mb-8">
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           {/* Product Info Section */}
@@ -142,7 +139,6 @@ function Product() {
               )}
             </div>
 
-            {/* Product Details */}
             <div className="flex flex-col">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800">{product?.name || "Product Name"}</h1>
               
@@ -190,7 +186,6 @@ function Product() {
                 )}
               </div>
 
-              {/* Availability */}
               {product?.stock > 0 ? (
                 <div className="flex items-center mb-4">
                   <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
@@ -208,7 +203,6 @@ function Product() {
                 </div>
               )}
 
-              {/* Delivery Information */}
               <div className="mb-6">
                 <div className="flex items-center text-gray-600">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -225,7 +219,6 @@ function Product() {
                 </div>
               </div>
 
-              {/* Quantity Selector */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Quantity:</label>
                 <div className="flex w-36 h-10 rounded-lg overflow-hidden border border-gray-300">
@@ -256,7 +249,6 @@ function Product() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 mt-2">
                 {cartMessage && (
                   <div className={`mb-3 px-4 py-2 rounded ${cartMessage.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -295,7 +287,6 @@ function Product() {
             </div>
           </div>
 
-          {/* Product Details Tabs */}
           <div className="border-t border-gray-200 mt-8">
             <div className="px-6 pt-4 pb-0">
               <div className="flex overflow-x-auto -mb-px space-x-8">
@@ -332,7 +323,6 @@ function Product() {
               </div>
             </div>
 
-            {/* Tab Content */}
             <div className="p-6">
               {activeTab === 'description' && (
                 <div>

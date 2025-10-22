@@ -6,7 +6,6 @@ const orderSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-
   items: [{
     product: {
       type: mongoose.Schema.Types.ObjectId,
@@ -18,7 +17,6 @@ const orderSchema = new mongoose.Schema({
     price: Number,
     quantity: Number
   }],
-
   shippingAddress: {
     street: String,
     city: String,
@@ -26,42 +24,27 @@ const orderSchema = new mongoose.Schema({
     zipCode: String,
     country: String
   },
-
   paymentInfo: {
     method: {
       type: String,
-      enum: ['credit_card', 'debit_card', 'upi', 'wallet', 'cod'],
+      enum: ['upi', 'cod'],
       required: true
     },
     transactionId: String,
-    status: {
-      type: String,
-      enum: ['pending', 'completed', 'failed'],
-      default: 'pending'
-    }
   },
-
   subtotal: Number,
   tax: Number,
   shippingCost: Number,
   discount: Number,
   totalAmount: Number,
-
   orderStatus: {
     type: String,
-    enum: ['processing', 'confirmed', 'shipped', 'delivered', 'cancelled'],
+    enum: ['processing', 'delivered', 'cancelled'],
     default: 'processing'
   },
-
-  statusUpdates: [{
-    status: String,
-    date: {
-      type: Date,
-      default: Date.now
-    },
-    note: String
-  }],
-
   deliveryExpected: Date,
   cancelReason: String
 }, { timestamps: true });
+
+const Order = mongoose.model('Order', orderSchema)
+module.exports = Order

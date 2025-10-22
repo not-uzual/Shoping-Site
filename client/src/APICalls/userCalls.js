@@ -21,3 +21,19 @@ export async function getCurrentUser(){
         }
     }
 }
+
+export async function addNewAddress(addressData) {
+    try {
+        const response = await api.post("/user/address", addressData);
+        return response.data;
+    } catch (error) {
+        console.error("Add address error:");
+        
+        if (error.response && error.response.data) {
+            throw error.response.data;
+        } 
+        else {
+            throw new Error("Network error or server not responding");
+        }
+    }
+}

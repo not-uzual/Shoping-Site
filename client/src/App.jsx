@@ -9,12 +9,13 @@ import useCurrentUser from "./hooks/useCurrentUser.jsx";
 import Profile from "./pages/Profile.jsx";
 import Product from "./pages/Product.jsx";
 import Cart from "./pages/Cart.jsx";
+import Checkout from "./pages/Checkout.jsx";
 import Order from "./pages/Order.jsx";
 import Footer from "./pages/Footer.jsx";
 
 function App() {
 
-  const { userData } = useSelector(state => state.user)
+  const { userData } = useSelector(state => state.user) 
     
   useCurrentUser()
 
@@ -29,6 +30,7 @@ function App() {
           <Route path="/orders" element={<Order />} />
           <Route path="/orders/:id" element={<Order />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/product/:id" element={<Product />} />
           <Route path="/search" element={<div className="p-6">Search results (coming soon)</div>} />

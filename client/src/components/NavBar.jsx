@@ -39,6 +39,7 @@ function NavBar({ userData }) {
         <div className="hidden md:flex items-center space-x-4">
           {userData ? (
             <>
+              <Link to="/" className="text-gray-600 hover:text-amber-500">Home</Link>
               <Link to="/orders" className="text-gray-600 hover:text-amber-500">Orders</Link>
               <Link to="/cart" className="text-gray-600 hover:text-amber-500">Cart</Link>
               <Link to="/profile" className="text-gray-600 hover:text-amber-500">Profile</Link>
@@ -83,12 +84,16 @@ function NavBar({ userData }) {
         </button>
       </nav>
       
-      {/* Mobile menu */}
       {mobileOpen && (
         <div className="fixed inset-0 z-90 bg-white md:hidden pt-16">
           <div className="p-5 flex flex-col space-y-6">
             {userData ? (
               <>
+                <Link
+                  to="/"
+                  className="text-lg py-2 border-b border-gray-200" 
+                  onClick={() => setMobileOpen(false)}
+                >Home</Link>
                 <Link 
                   to="/orders" 
                   className="text-lg py-2 border-b border-gray-200" 

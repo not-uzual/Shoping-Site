@@ -1,4 +1,5 @@
 const express = require('express');
+
 const { addToCart, getCart, updateQuantity, removeFromCart } = require('../controllers/cart.controllers');
 const isAuthenticated = require('../middlewares/isAuth');
 

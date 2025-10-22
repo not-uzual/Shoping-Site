@@ -230,11 +230,11 @@ function Cart() {
               </div>
             </div>
             
-            <button
-              className="w-full py-3 px-4 bg-amber-500 text-white text-sm font-medium rounded-md hover:bg-amber-600 focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50 transition-colors"
+            <Link to="/checkout"
+              className="w-full py-3 px-4 bg-amber-500 text-white text-sm font-medium rounded-md hover:bg-amber-600 focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50 transition-colors text-center block"
             >
               Proceed to Checkout
-            </button>
+            </Link>
             
             <div className="mt-4 text-center">
               <Link to="/" className="text-amber-500 hover:text-amber-600 text-sm font-medium">
