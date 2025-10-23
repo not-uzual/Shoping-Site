@@ -22,7 +22,7 @@ async function signup(req, res){
 
     res.cookie('token', token, {
         httpOnly: true,
-        sameSite: none,
+        sameSite: 'none',
         secure: true,
         maxAge: 15 * 24 * 60 * 60 * 1000,
     })
@@ -54,7 +54,7 @@ async function login(req, res){
 
         res.cookie('token', token, {
             httpOnly: true,
-            sameSite: none,
+            sameSite: 'none',
             secure: true,
             maxAge: 15 * 24 * 60 * 60 * 1000,
         });
@@ -65,7 +65,6 @@ async function login(req, res){
         });
     } catch (error) {
         res.status(500).json({ message: "Server Error",
-            error
          });
     }
 }
@@ -74,7 +73,7 @@ function logout(req, res){
     try {
         res.cookie('token', '', {
             httpOnly: true,
-            sameSite: none,
+            sameSite: 'none',
             secure: true,
             expires: new Date(0), 
             maxAge: 0 
