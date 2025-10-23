@@ -22,7 +22,7 @@ async function signup(req, res){
 
     res.cookie('token', token, {
         httpOnly: true,
-        sameSite: true,
+        sameSite: none,
         maxAge: 15 * 24 * 60 * 60 * 1000,
     })
     
@@ -53,7 +53,7 @@ async function login(req, res){
 
         res.cookie('token', token, {
             httpOnly: true,
-            sameSite: true,
+            sameSite: none,
             maxAge: 15 * 24 * 60 * 60 * 1000,
         });
 
@@ -70,7 +70,7 @@ function logout(req, res){
     try {
         res.cookie('token', '', {
             httpOnly: true,
-            sameSite: true,
+            sameSite: none,
             expires: new Date(0), 
             maxAge: 0 
         });
