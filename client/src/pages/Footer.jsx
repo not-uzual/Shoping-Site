@@ -44,7 +44,7 @@ function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/product/featured" className="text-sm text-white hover:text-amber-800 transition-colors">
+                <Link to="/" className="text-sm text-white hover:text-amber-800 transition-colors">
                   Featured Products
                 </Link>
               </li>

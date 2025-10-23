@@ -195,7 +195,7 @@ function Order() {
       <div className="space-y-6">
         {getFilteredOrders().map(order => (
           <div key={order._id} className="bg-white rounded-lg shadow-md overflow-hidden">
-            {/* Order header */}
+        
             <div className="bg-gray-50 p-4 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
               <div className="mb-2 sm:mb-0">
                 <div className="flex items-center space-x-2">
@@ -213,17 +213,7 @@ function Order() {
                 <div className="text-sm font-medium text-gray-700">
                   Total: <span className="text-amber-500">${order.totalAmount?.toFixed(2) || '0.00'}</span>
                 </div>
-                <div className="flex space-x-4">
-                  <Link 
-                    to={`/orders/${order._id}`} 
-                    className="text-amber-500 hover:text-amber-600 text-sm font-medium flex items-center mt-2 sm:mt-0"
-                  >
-                    View Details
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  
+                <div className="flex space-x-4">                  
                   {(order.orderStatus === 'processing' || order.orderStatus === 'confirmed' || order.orderStatus === 'shipped') && (
                     <button
                       type="button"
