@@ -20,7 +20,7 @@ connectDataBase()
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://shoping-site-opal.vercel.app',
   credentials: true,
 }))
 
@@ -36,4 +36,5 @@ app.use('/product', productRouter)
 app.use('/cart', cartRouter)
 app.use('/order', orderRouter)
 
-app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
+
