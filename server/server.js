@@ -20,7 +20,7 @@ connectDataBase()
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: 'https://shoping-site-opal.vercel.app',
+  origin: 'http://localhost:5173',
   credentials: true,
 }))
 

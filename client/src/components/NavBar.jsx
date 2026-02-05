@@ -58,7 +58,7 @@ function NavBar({ userData }) {
                 to="/signup"
                 className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
               >
-                {loading ? 'Logging out...' : 'Logout'}
+                {loading ? 'Logging out...' : 'Sign Up'}
               </Link>
             </>
           )}
