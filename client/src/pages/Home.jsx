@@ -45,11 +45,30 @@ const bannerImages = [
   }
 ];
 
-const sampleProducts = await getAllProducts()
+
 
 function Home() {
+  const [sampleProducts, setSampleProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
   const [currentBanner, setCurrentBanner] = useState(0);
   const bannerRef = useRef(null);
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const productData = await getAllProducts();
+        setSampleProducts(productData);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProducts();
+  }, []);
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -132,11 +151,18 @@ function Home() {
 
       <section className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-bold text-amber-500 mb-6">Featured Products</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {sampleProducts.map((product, index) => (
-            <ProductCard key={index} product={product} />
-          ))}
-        </div>
+        
+        {loading ? (
+          <div className="flex justify-center items-center h-40">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-amber-500"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {sampleProducts.map((product) => (
+              <ProductCard key={product._id} product={product} inWishlist={product.isLiked} />
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );

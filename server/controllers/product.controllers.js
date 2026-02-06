@@ -1,5 +1,6 @@
 const Product = require('../models/product.model')
 const User = require('../models/user.model')
+const mongoose = require('mongoose')
 
 async function createProduct(req, res) {
     try {
@@ -21,11 +22,26 @@ async function createProduct(req, res) {
 
 async function getAllProducts(req, res) {
     try {
-        const allProducts = await Product.find({});
+        const userId = req.userId;
+        const allProducts = await Product.find({}).lean();
         
-        res.status(200).json(allProducts)
+        const wishlistIds = new Set();
+        if (userId) {
+            const user = await User.findById(userId).select('wishlist').lean();
+            if (user && user.wishlist) {
+                user.wishlist.forEach(id => wishlistIds.add(id.toString()));
+            }
+        }
+        
+        const productsWithLikeStatus = allProducts.map(product => ({
+            ...product,
+            isLiked: wishlistIds.has(product._id.toString())
+        }));
+        
+        res.status(200).json(productsWithLikeStatus);
     } catch (error) {
-        return res.sendStatus(500)
+        console.error("Error fetching products:", error);
+        return res.status(500).json({ message: "Server error" });
     }
 }
 

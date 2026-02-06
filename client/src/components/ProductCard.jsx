@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { addToCart } from '../APICalls/cartCalls';
 import { addToWishlist, removeFromWishlist } from '../APICalls/productCalls';
 
-function ProductCard({ product, inWishlist = false, onWishlistChange = null }) {
+function ProductCard({ product, inWishlist}) {
   const [addingToCart, setAddingToCart] = useState(false);
   const [cartMessage, setCartMessage] = useState(null);
   const [isInWishlist, setIsInWishlist] = useState(inWishlist);
@@ -60,10 +60,7 @@ function ProductCard({ product, inWishlist = false, onWishlistChange = null }) {
         setCartMessage({ type: 'success', text: `${name} added to wishlist!` });
       }
       
-      // Call parent's callback if provided
-      if (onWishlistChange) {
-        onWishlistChange(_id, !isInWishlist);
-      }
+      // removeFromWishlist(product._id)
       
       setTimeout(() => setCartMessage(null), 3000);
     } catch (error) {
