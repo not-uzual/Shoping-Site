@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import ProductCard from '../components/ProductCard';
 import { getAllProducts } from '../APICalls/productCalls';
+import PaginationBox from '../components/PaginationBox';
 
 const bannerImages = [
   {
@@ -150,7 +151,12 @@ function Home() {
       </section>
 
       <section className="container mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold text-amber-500 mb-6">Featured Products</h2>
+        <div className='flex-1 flex items-center justify-between mb-6'>
+          <h2 className="text-2xl font-bold text-amber-500 ">Featured Products</h2>
+          <div className=''>
+            <PaginationBox/>
+          </div>
+        </div>
         
         {loading ? (
           <div className="flex justify-center items-center h-40">
