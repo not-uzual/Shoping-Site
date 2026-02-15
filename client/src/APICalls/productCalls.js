@@ -6,11 +6,12 @@ const api = axios.create({
     withCredentials: true,
 })
 
-export async function getAllProducts(){
+export async function getAllProducts(page, limit){
     try {
-        const response = await api.get('product/fetchall')
+        const response = await api.get(`product/fetchall?limit=${limit}&&offset=${(page-1)*limit}`)
         return response.data
-    } catch (error) {
+    } 
+    catch (error) {
         console.error("Get all product error:");
         
         if (error.response && error.response.data) {

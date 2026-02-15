@@ -49,18 +49,21 @@ const bannerImages = [
 
 
 function Home() {
-  const [sampleProducts, setSampleProducts] = useState([]);
+  const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
   
   const [currentBanner, setCurrentBanner] = useState(0);
   const bannerRef = useRef(null);
+
+  const [pageNo, setPageNo] = useState(1);
+  const [itemsLimit, setItemsLimit] = useState(10)
   
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const productData = await getAllProducts();
-        setSampleProducts(productData);
+        const productData = await getAllProducts(pageNo, itemsLimit);
+        setProductData(productData);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -69,7 +72,7 @@ function Home() {
     };
     
     fetchProducts();
-  }, []);
+  }, [pageNo, itemsLimit]);
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -154,7 +157,7 @@ function Home() {
         <div className='flex-1 flex items-center justify-between mb-6'>
           <h2 className="text-2xl font-bold text-amber-500 ">Featured Products</h2>
           <div className=''>
-            <PaginationBox/>
+            <PaginationBox page={pageNo} setPage={setPageNo} limit={itemsLimit} setLimit={setItemsLimit} allowedPage={productData.total/itemsLimit}/>
           </div>
         </div>
         
@@ -164,7 +167,7 @@ function Home() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {sampleProducts.map((product) => (
+            {productData.products.map((product) => (
               <ProductCard key={product._id} product={product} inWishlist={product.isLiked} />
             ))}
           </div>

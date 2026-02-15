@@ -23,7 +23,15 @@ async function createProduct(req, res) {
 async function getAllProducts(req, res) {
     try {
         const userId = req.userId;
-        const allProducts = await Product.find({}).lean();
+        const limit = parseInt(req.query.limit);
+        const offset = parseInt(req.query.offset);
+        
+        const totalProducts = await Product.countDocuments({});
+        
+        const allProducts = await Product.find({})
+            .skip(offset)
+            .limit(limit)
+            .lean();
         
         const wishlistIds = new Set();
         if (userId) {
@@ -38,7 +46,10 @@ async function getAllProducts(req, res) {
             isLiked: wishlistIds.has(product._id.toString())
         }));
         
-        res.status(200).json(productsWithLikeStatus);
+        res.status(200).json({
+            products: productsWithLikeStatus,
+            total: totalProducts,
+        });
     } catch (error) {
         console.error("Error fetching products:", error);
         return res.status(500).json({ message: "Server error" });
